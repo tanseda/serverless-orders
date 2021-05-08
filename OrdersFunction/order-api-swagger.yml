@@ -1,0 +1,117 @@
+---
+swagger: "2.0"
+info:
+  description: Online Print Orders
+  version: 1.0.0
+  title: Online Print Orders API
+  contact:
+    email: tanseda@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: virtserver.swaggerhub.com
+basePath: /stan35/Orders/1.0.0
+schemes:
+- https
+paths:
+  /products/{productId}:
+    get:
+      summary: get product details by productId
+      description: |
+        By passing the productId, you can get the product name and price
+      operationId: products
+      produces:
+      - application/json
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        type: string
+        format: integer
+      responses:
+        "200":
+          description: Product Found
+          schema:
+            type: object
+        "404":
+          description: Not Found
+  /orders/{orderRef}:
+    get:
+      summary: get all items by orderRef
+      description: |
+        By passing the orderRef, you can get all the items in that order.
+      operationId: orders
+      produces:
+      - application/json
+      parameters:
+      - name: orderRef
+        in: path
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Items Found
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductItem'
+        "404":
+          description: Not Found
+  /customers/{customerId}:
+    get:
+      summary: get all orders by customerId
+      description: |
+        By passing the customerid, you can get all orders of that customer
+      operationId: customers
+      produces:
+      - application/json
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        type: string
+        format: integer
+      responses:
+        "200":
+          description: Orders Found
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OrderItem'
+        "404":
+          description: Not Found
+definitions:
+  ProductItem:
+    type: object
+    required:
+    - id
+    - name
+    - price
+    properties:
+      id:
+        type: string
+        format: integer
+        example: "12345"
+      name:
+        type: string
+        example: Blue Book
+      price:
+        type: number
+        example: 18.9
+  OrderItem:
+    type: object
+    required:
+    - id
+    properties:
+      id:
+        type: string
+        format: integer
+        example: "12345"
+      customerId:
+        type: string
+        example: "56789"
+      products:
+        type: array
+        description: List of Products
+        items:
+          $ref: '#/definitions/ProductItem'

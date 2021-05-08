@@ -1,0 +1,136 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  orders
+  Online Print Orders Service SAM Template
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 20
+    Environment:
+      Variables:
+        MemorySize: 512
+        TABLE_NAME: !Ref OrdersTable
+#        AWS_ACCESS_KEY_ID: "AKIAVBPJNRF5Q2EOBMGN"
+#        AWS_SECRET_KEY: "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"
+Resources:
+  OrdersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: orders
+        AttributeDefinitions:
+          - AttributeName: par
+            AttributeType: S
+          - AttributeName: sort
+            AttributeType: S
+        KeySchema:
+          - AttributeName: par
+            KeyType: HASH
+          - AttributeName: sort
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+  GetProductsFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      MemorySize: 512
+      PackageType: Image
+      ImageConfig:
+        Command:
+          - com.stan.orders.handler.products.GetProductsFunctionHandler
+      Events:
+        GetProducts:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /products/{productId}
+            Method: get
+      Policies:
+        DynamoDBCrudPolicy:
+          TableName: !Ref OrdersTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref OrdersTable
+    Metadata:
+      DockerTag: java8-maven-v1
+      DockerContext: ./OrdersFunction
+      Dockerfile: Dockerfile
+  GetAllOrdersForCustomerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      MemorySize: 512
+      PackageType: Image
+      ImageConfig:
+        Command:
+          - com.stan.orders.handler.customers.GetAllOrdersForCustomerFunctionHandler
+      Events:
+        GetAllOrdersForCustomer:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /customers/{customerId}
+            Method: get
+      Policies:
+        DynamoDBCrudPolicy:
+          TableName: !Ref OrdersTable
+    Metadata:
+      DockerTag: java8-maven-v1
+      DockerContext: ./OrdersFunction
+      Dockerfile: Dockerfile
+
+
+  GetAllItemsForOrderFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      MemorySize: 512
+      PackageType: Image
+      ImageConfig:
+        Command:
+          - com.stan.orders.handler.orders.GetAllItemsForOrderFunctionHandler
+      Events:
+        GetAllItemsForOrder:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /orders/{orderRef}
+            Method: get
+      Policies:
+        DynamoDBCrudPolicy:
+          TableName: !Ref OrdersTable
+    Metadata:
+      DockerTag: java8-maven-v1
+      DockerContext: ./OrdersFunction
+      Dockerfile: Dockerfile
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  GetProductsApi:
+    Description: "API Gateway endpoint URL for Prod stage for Get Product function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/products/"
+  GetAllOrdersForCustomerApi:
+    Description: "API Gateway endpoint URL for Prod stage for Get All Orders For Customer function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/customers/"
+  GetAllItemsForOrderApi:
+    Description: "API Gateway endpoint URL for Prod stage for Get All Items For Order function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/orders/"
+  GetProductsFunction:
+    Description: "Get Product Lambda Function ARN"
+    Value: !GetAtt GetProductsFunction.Arn
+  GetAllOrdersForCustomerFunction:
+    Description: "Get All Orders For Customer Lambda Function ARN"
+    Value: !GetAtt GetAllOrdersForCustomerFunction.Arn
+  GetAllItemsForOrderFunction:
+    Description: "Get All Items For Order Lambda Function ARN"
+    Value: !GetAtt GetAllItemsForOrderFunction.Arn
+  OrdersTable:
+    Description: "Orders DB ARN"
+    Value: !GetAtt OrdersTable.Arn
+  GetProductsFunctionIamRole:
+    Description: "Implicit IAM Role created for Get Product function"
+    Value: !GetAtt GetProductsFunctionRole.Arn
+  GetAllOrdersForCustomerFunctionIamRole:
+    Description: "Implicit IAM Role created for Get All Orders For Customer function"
+    Value: !GetAtt GetAllOrdersForCustomerFunctionRole.Arn
+  GetAllItemsForOrderFunctionIamRole:
+    Description: "Implicit IAM Role created for Get All Items For Order function"
+    Value: !GetAtt GetAllItemsForOrderFunctionRole.Arn
+
