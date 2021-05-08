@@ -36,7 +36,7 @@ public class GetProductsFunctionHandler implements RequestHandler<APIGatewayProx
             return createResponse(gson.toJson(product.get()), 200);
         }
 
-        return createResponse("not found", 404);
+        return createResponse("{ \"error\": \"no records found\" }", 404);
     }
 
     private APIGatewayProxyResponseEvent createResponse(String body, int statusCode) {

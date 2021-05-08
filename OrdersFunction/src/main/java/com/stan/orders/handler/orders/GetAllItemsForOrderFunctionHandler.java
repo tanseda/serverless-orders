@@ -33,7 +33,7 @@ public class GetAllItemsForOrderFunctionHandler implements RequestHandler<APIGat
         List<ItemResponse> orders = getAllItemsByOrder(param, logger);
 
         if (orders.isEmpty()) {
-            return createResponse("not found", 404);
+            return createResponse("{ \"error\": \"no records found\" }", 404);
         }
 
         try {
