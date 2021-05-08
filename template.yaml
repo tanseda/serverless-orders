@@ -12,8 +12,6 @@ Globals:
       Variables:
         MemorySize: 512
         TABLE_NAME: !Ref OrdersTable
-#        AWS_ACCESS_KEY_ID: "AKIAVBPJNRF5Q2EOBMGN"
-#        AWS_SECRET_KEY: "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"
 Resources:
   OrdersTable:
       Type: AWS::DynamoDB::Table
