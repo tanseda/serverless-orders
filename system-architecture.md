@@ -216,10 +216,8 @@ return result.stream()
        .collect(Collectors.toList());
 ```
 
-### Testing
-
-
 ### Deploying To Production
+I used AWS SAM to manage the deployment to the AWS. All the AWS resources are created from 'template.yml'.
 
 AWS SAM comes built-in with CodeDeploy to provide gradual Lambda deployments. SAM will do the following controls, if it's configured in template.yml:
 * Gradually shifts customer traffic to the new version until you're satisfied that it's working as expected, or you roll back the update.

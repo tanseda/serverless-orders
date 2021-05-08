@@ -12,7 +12,6 @@ Globals:
       Variables:
         MemorySize: 512
         TABLE_NAME: !Ref OrdersTable
-        REGION: ${AWS::Region}
 Resources:
   OrdersTable:
       Type: AWS::DynamoDB::Table

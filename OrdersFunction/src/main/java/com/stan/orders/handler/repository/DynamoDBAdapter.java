@@ -22,12 +22,9 @@ public class DynamoDBAdapter {
     private final AmazonDynamoDB client;
 
     private DynamoDBAdapter() {
-        String systemRegion = System.getenv("REGION");
-        Regions region = systemRegion != null ? Regions.valueOf(systemRegion) : Regions.EU_WEST_2;
-
         this.client = AmazonDynamoDBClientBuilder.standard()
                 .withCredentials(new EnvironmentVariableCredentialsProvider())
-                .withRegion(region)
+                .withRegion(Regions.EU_WEST_2)
                 .build();
     }
 
@@ -42,7 +39,6 @@ public class DynamoDBAdapter {
     public <T> List<T> getItem(String id, EntityMapper<T> mapper, LambdaLogger logger) {
         Map<String, AttributeValue> attrValues =
                 new HashMap<>();
-
         attrValues.put(":v_id", new AttributeValue(id));
 
         QueryRequest queryReq = new QueryRequest(System.getenv("TABLE_NAME"));
