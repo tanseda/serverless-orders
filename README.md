@@ -7,12 +7,11 @@ The purpose of this API is to expose orders details with the following queries:
 
 
 ## System Architecture
-Please see link for the details of system architecture
-
-
-## How to deploy to AWS
-Please see link for the details of system architecture
-
+Please see the details of system architecture in [here.](../blob/main/system-architecture.md)
 
 ## Code structure
-Please see link for the details of system architecture
+Please see the details of the code structure in [here](../blob/main/code-structure.md)
+
+## How to deploy to AWS
+  [here](../SAM.md)
+
