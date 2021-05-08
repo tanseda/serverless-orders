@@ -18,19 +18,16 @@ import java.util.stream.Collectors;
  * Created by stan on 08/05/2021.
  */
 public class DynamoDBAdapter {
-    public static final String TABLE_NAME = "orders";
-    public static final String ID_COLUMN = "par";
-    public static final String SORT_KEY_COLUMN = "sort";
-    public static final String BODY_COLUMN = "body";
-
     private static DynamoDBAdapter instance;
-
     private final AmazonDynamoDB client;
 
     private DynamoDBAdapter() {
+        String systemRegion = System.getenv("REGION");
+        Regions region = systemRegion != null ? Regions.valueOf(systemRegion) : Regions.EU_WEST_2;
+
         this.client = AmazonDynamoDBClientBuilder.standard()
                 .withCredentials(new EnvironmentVariableCredentialsProvider())
-                .withRegion(Regions.EU_WEST_2)
+                .withRegion(region)
                 .build();
     }
 
@@ -48,7 +45,7 @@ public class DynamoDBAdapter {
 
         attrValues.put(":v_id", new AttributeValue(id));
 
-        QueryRequest queryReq = new QueryRequest(TABLE_NAME);
+        QueryRequest queryReq = new QueryRequest(System.getenv("TABLE_NAME"));
         queryReq.setKeyConditionExpression("par = :v_id");
         queryReq.setExpressionAttributeValues(attrValues);
 

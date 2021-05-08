@@ -216,14 +216,35 @@ return result.stream()
        .collect(Collectors.toList());
 ```
 
-
 ### Testing
+
 
 ### Deploying To Production
 
-Gradually shifts customer traffic to the new version until you're satisfied that it's working as expected, or you roll back the update.
-Defines pre-traffic(PreTraffic) and post-traffic (PostTraffic) test functions to verify that the newly deployed code is configured correctly and your application operates as expected.
+AWS SAM comes built-in with CodeDeploy to provide gradual Lambda deployments. SAM will do the following controls, if it's configured in template.yml:
+* Gradually shifts customer traffic to the new version until you're satisfied that it's working as expected, or you roll back the update.
+* Defines pre-traffic(PreTraffic) and post-traffic (PostTraffic) test functions to verify that the newly deployed code is configured correctly and your application operates as expected.
+* Rolls back the deployment if CloudWatch alarms are triggered
 
+```
+GetCustomerFunction:
+     Type: AWS::Serverless::Function
+     Properties:
+       AutoPublishAlias: live
+       DeploymentPreference:
+         Type: Linear10PercentEvery10Minutes
+         Alarms:
+           # A list of alarms that you want to monitor
+           - !Ref AliasErrorMetricGreaterThanZeroAlarm
+           - !Ref LatestVersionErrorMetricGreaterThanZeroAlarm
+         Hooks:
+           # Validation Lambda functions that are run before & after traffic shifting
+           PreTraffic: !Ref PreTrafficLambdaFunction
+           PostTraffic: !Ref PostTrafficLambdaFunction
+         # Provide a custom role for CodeDeploy traffic shifting here, if you don't supply one
+         # SAM will create one for you with default permissions
+         Role: !Ref IAMRoleForCodeDeploy # Parameter example, you can pass an IAM ARN
+```
 
 ### Next steps
 1. In the current design, the Lambda functions retrieve data from DynamoDB each time. Since the data we store will not change frequently, I would consider caching the frequent queries to improve the performance. To achieve that Amazon DynamoDB Accelerator (DAX) can be integrated to the system.
