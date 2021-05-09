@@ -7,7 +7,7 @@ The purpose of this API is to expose orders details with the following queries:
 
 
 ## System Architecture
-Please see the details of system architecture in [here.](../main/system-architecture.md)
+Please see the details of the system architecture in [here.](../main/system-architecture.md)
 
 ## Code structure
 Please see the details of the code structure in [here](../main/code-structure.md)
