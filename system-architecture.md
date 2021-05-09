@@ -18,12 +18,12 @@ In order to achieve our purpose with minimum maintenance effort, I decided to go
 ![Orders Table](images/system-design.png)
 
 ### API Gateway:
-When The API Gateway invoked with a REST request, it will proxy the related Lambda Function according to the path URI. <br/>
+When The API Gateway is invoked with a REST request, it will proxy the related Lambda Function according to the path URI. <br/>
 I preferred IAM authentication for the APIs in the API Gateway. API Gateway invokes the API route only if the client has execute-api permission for the route.<br/>
 
 ### Security:
 Additional to the IAM authentication in the API Gateway, the Lambda Functions will have an execution role with an IAM policy that authorizes to Read/Query from DynamoDB table and upload its log to The CloudWatch. <br/>
-Samples managed policy are given below:
+Managed policies are given below:
 - **AWSLambdaBasicExecutionRole** – Upload logs to CloudWatch
 - **AWSLambdaDynamoDBExecutionRole** – Read from DynamoDB Streams
 
@@ -33,9 +33,9 @@ CloudWatch Logs:
 
 CloudWatch Metrics:
 * AWS Lambda and DynamoDB metrics will be displayed in AWS CloudWatch Metrics such as
-* Invocations, Durations, Concurrent Executions
-* Error count, Success Rates, Throttles
-* ConsumedReadCapacityUnits, ThrottledRequests, etc. 
+  * Invocations, Durations, Concurrent Executions
+  * Error count, Success Rates, Throttles
+  * ConsumedReadCapacityUnits, ThrottledRequests, etc. 
 
 ### Data storage
 Example dataset is given below
@@ -65,11 +65,11 @@ For example, for the customer 56789, the partition key will be "CUSTOMER-56789".
 
 The sort key is a string, and it will differ for each type of partition key.
 
-| partition key   |  sorting key     |
-|-----------------|------------------|
-| CUSTOMER-\<ID\> |    <OrderRef>    |
-|   ORDER-\<ID\>  |    <ProductId>   |
-| PRODUCT-\<ID\>  |   <ProductName>  |
+| partition key   |  sorting key      |
+|-----------------|-------------------|
+| CUSTOMER-\<ID\> |   \<OrderRef\>    |
+|   ORDER-\<ID\>  |   \<ProductId\>   |
+| PRODUCT-\<ID\>  |  \<ProductName\>  |
 
 In the Orders table:<br/>
 
@@ -92,7 +92,7 @@ Row 5: The item is storing the details of product notebook_hardcover_red.
     
     
 ### REST APIs
-Please see OrdersFunction/order-api-swagger.yml for the detailed template of REST APIs.
+Please see [order-api-swagger.yml](../main/OrdersFunction/order-api-swagger.yml) for the detailed template of REST APIs.
 
 In the following table, the possible response status are given:
 
@@ -104,7 +104,7 @@ In the following table, the possible response status are given:
 | Unexpected exception |    500   |
 
 ### Lambda Functions
-There will be separate lambda functions for each queries. For the implementation of the lambda functions, please check **OrdersFunctions/** project. 
+There will be separate lambda functions for each queries. For the implementation of the lambda functions, please check [OrdersFunction](../main/OrdersFunction/) project. 
 
 #### Get the price and name for a given product
 
